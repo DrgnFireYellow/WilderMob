@@ -1,6 +1,10 @@
-name: PluginTemplate
+name: WilderMob
 version: 1.0.0
-main: com.drgnfireyellow.template.Plugin
-description: A template plugin
+main: com.drgnfireyellow.wildermob.WilderMob
+description: A unique attempt at combining the WilderLore and Minecraft universes.
 author: DrgnFireYellow
 api-version: '1.20'
+
+commands:
+  'snare':
+    description: "Opens the snare menu"
