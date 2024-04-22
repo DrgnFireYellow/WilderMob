@@ -8,3 +8,7 @@ api-version: '1.20'
 commands:
   'snare':
     description: "Opens the snare menu"
+  'mark':
+    description: "Sends bonded mobs into their marks"
+  'unmark':
+    description: "Sends bonded mobs out of their marks"

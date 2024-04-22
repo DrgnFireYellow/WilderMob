@@ -3,8 +3,12 @@ package com.drgnfireyellow.wildermob;
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.WorldCreator;
+import org.bukkit.WorldType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.Command;
@@ -28,7 +32,15 @@ public class WilderMob extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         Bukkit.getPluginManager().registerEvents(this, this);
-        Bukkit.getLogger().info("Loaded!");
+        initializeMarkWorld();
+        Bukkit.getLogger().info("[WilderMob] Loaded!");
+    }
+
+    private void initializeMarkWorld() {
+        WorldCreator creator = new WorldCreator("mark");
+        creator.environment(World.Environment.NORMAL);
+        creator.type(WorldType.FLAT);
+        creator.createWorld();
     }
 
     @EventHandler
@@ -46,7 +58,9 @@ public class WilderMob extends JavaPlugin implements Listener {
             try {
                 Location location = player.getLocation();
                 Entity bondedMob = location.getWorld().spawnEntity(location, Snares.getMob(items));
+                bondedMob.setPersistent(true);
                 bondedMob.addScoreboardTag("bonded");
+                bondedMob.addScoreboardTag("bonded." + player.getUniqueId().toString());
             }
             catch(Exception e) {
                 player.sendMessage("Nothing happened...");
@@ -69,6 +83,22 @@ public class WilderMob extends JavaPlugin implements Listener {
                 Player player = (Player) sender;
                 snareUsers.add(player.getName());
                 player.openInventory(snareinventory);
+            }
+            if (command.getName().equals("mark")) {
+                Player player = (Player) sender;
+                for (Entity mob : player.getWorld().getEntities()) {
+                    if (mob.getScoreboardTags().contains("bonded." + player.getUniqueId().toString())) {
+                        mob.teleport(Bukkit.getWorld("mark").getSpawnLocation());
+                    }
+                }
+            }
+            if (command.getName().equals("unmark")) {
+                Player player = (Player) sender;
+                for (Entity mob : Bukkit.getWorld("mark").getEntities()) {
+                    if (mob.getScoreboardTags().contains("bonded." + player.getUniqueId().toString())) {
+                        mob.teleport(player.getLocation());
+                    }
+                }
             }
         }
         return false;
