@@ -10,9 +10,12 @@ import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -86,8 +89,10 @@ public class WilderMob extends JavaPlugin implements Listener {
             }
             if (command.getName().equals("mark")) {
                 Player player = (Player) sender;
+                PotionEffect regenEffect = new PotionEffect(PotionEffectType.REGENERATION, Integer.MAX_VALUE, 1);
                 for (Entity mob : player.getWorld().getEntities()) {
                     if (mob.getScoreboardTags().contains("bonded." + player.getUniqueId().toString())) {
+                        regenEffect.apply(((LivingEntity) mob));
                         mob.teleport(Bukkit.getWorld("mark").getSpawnLocation());
                     }
                 }
@@ -96,6 +101,7 @@ public class WilderMob extends JavaPlugin implements Listener {
                 Player player = (Player) sender;
                 for (Entity mob : Bukkit.getWorld("mark").getEntities()) {
                     if (mob.getScoreboardTags().contains("bonded." + player.getUniqueId().toString())) {
+                        ((LivingEntity) mob).removePotionEffect(PotionEffectType.REGENERATION);
                         mob.teleport(player.getLocation());
                     }
                 }
